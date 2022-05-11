@@ -3,9 +3,9 @@
 module Geoprojection
   # Elliptical projection of a center point (lat, long) with a provided distance from the center.
   class Ellipse
-    EQUATOR_KM_PER_LATITUDE_DEGREE = 110.567
-    EQUATOR_KM_PER_LONGITUDE_DEGREE = 111.321
     DEGREES_PER_RADIAN = Math::PI / 180
+    EQUATOR_KM_PER_LATITUDE_RADIAN = 110.567 * DEGREES_PER_RADIAN
+    EQUATOR_KM_PER_LONGITUDE_RADIAN = 111.321 * DEGREES_PER_RADIAN
 
     def initialize(latitude:, longitude:, distance:, points: 36)
       @latitude = latitude
@@ -33,7 +33,7 @@ module Geoprojection
     end
 
     def derived_y(theta)
-      @latitude + (DEGREES_PER_RADIAN * @distance * latitude_distortion * Math.sin(DEGREES_PER_RADIAN * theta))
+      @latitude + (DEGREES_PER_RADIAN * @distance * Math.sin(DEGREES_PER_RADIAN * theta))
     end
 
     def step
@@ -41,11 +41,7 @@ module Geoprojection
     end
 
     def longitude_distortion
-      @longitude_distortion ||= 1 / (EQUATOR_KM_PER_LONGITUDE_DEGREE * Math.cos(DEGREES_PER_RADIAN * @latitude))
-    end
-
-    def latitude_distortion
-      @latitude_distortion ||= 1 / (EQUATOR_KM_PER_LATITUDE_DEGREE / @latitude)
+      @longitude_distortion ||= 1 / (EQUATOR_KM_PER_LONGITUDE_RADIAN * Math.cos(DEGREES_PER_RADIAN * @latitude))
     end
   end
 end
